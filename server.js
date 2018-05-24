@@ -23,6 +23,10 @@ const db = knex({
 	}
 });
 
+app.get("*", (req, res) => {
+	res.send("sorry, nothing here((");
+});
+
 app.get("/", (req, res) => {
 	res.send("welcome");
 });
