@@ -15,8 +15,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-const PORT = process.env.PORT || 3001;
-
 const db = knex({
 	client: 'pg',
 	connection: {
@@ -42,6 +40,6 @@ app.get("*", (req, res) => {
 	res.send("sorry, nothing here((");
 });
 
-app.listen(PORT, () => {
+app.listen(process.env.PORT || 3001, function(){
 	console.log("server starts");
 });
