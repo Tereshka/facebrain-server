@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt-nodejs");
@@ -13,7 +15,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3001;
 
 const db = knex({
 	client: 'pg',
@@ -36,9 +38,9 @@ app.get("/profile/:id", profile.handleProfile(db));
 app.put("/image", image.handleImage(db));
 app.post("/imageurl", image.handleApiCall());
 
-// app.get("*", (req, res) => {
-// 	res.send("sorry, nothing here((");
-// });
+app.get("*", (req, res) => {
+	res.send("sorry, nothing here((");
+});
 
 app.listen(PORT, () => {
 	console.log("server starts");

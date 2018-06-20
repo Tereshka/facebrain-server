@@ -1,8 +1,33 @@
 const Clarifai = require('clarifai');
-
 const app = new Clarifai.App({
    apiKey: process.env.API_CLARIFAI
-  });
+});
+
+var multer = require('multer');
+var storage = multer.diskStorage({
+  filename: function(req, file, callback) {
+    callback(null, Date.now() + file.originalname);
+  }
+});
+var imageFilter = function (req, file, cb) {
+    // accept image files only
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+        return cb(new Error("Only image files are allowed!"), false);
+    }
+    cb(null, true);
+};
+var upload = multer({ storage: storage, fileFilter: imageFilter})
+
+const cloudinary = require("cloudinary");
+cloudinary.config({ 
+  cloud_name: process.env.CLOUDINARY_NAME, 
+  api_key: process.env.CLOUDINARY_API_KEY, 
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+function escapeRegex(text) {
+	return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
 
 const handleApiCall = () => (req, res) => {
 	app.models.predict("a403429f2ddf4b49b307e318f00e528b", req.body.input)
