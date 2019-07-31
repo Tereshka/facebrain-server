@@ -18,12 +18,24 @@ var imageFilter = function (req, file, cb) {
 };
 var upload = multer({ storage: storage, fileFilter: imageFilter})
 
+
 const cloudinary = require("cloudinary");
 cloudinary.config({ 
   cloud_name: process.env.CLOUDINARY_NAME, 
   api_key: process.env.CLOUDINARY_API_KEY, 
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
+
+
+const handleImageUpload = () => (req, res) => {
+	console.log(req.files);
+	const values = Object.values(req.files);
+  const promises = values.map(image => cloudinary.uploader.upload(image.path));
+  
+  Promise
+    .all(promises)
+    .then(results => res.json(results));
+}
 
 function escapeRegex(text) {
 	return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
@@ -34,7 +46,7 @@ const handleApiCall = () => (req, res) => {
 	.then(data => {
 		res.json(data);
 	})
-	.catch(err => res.status(400).json("unable to work with API"));
+	.catch(err => res.status(400).json(-1));
 }
 
 
@@ -55,4 +67,4 @@ const handleImage = (db) => (req, res) => {
 	.catch( err => res.status(400).json("unable to get entries"));
 }
 
-module.exports = {handleImage, handleApiCall}
+module.exports = {handleImage, handleApiCall, handleImageUpload}

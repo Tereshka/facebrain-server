@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt-nodejs");
 const cors = require("cors");
 const knex = require("knex");
+const formData = require('express-form-data');
 
 const register = require("./controllers/register.js");
 const signin = require("./controllers/signin.js");
@@ -14,6 +15,7 @@ const image = require("./controllers/image.js");
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
+app.use(formData.parse());
 
 const db = knex({
 	client: 'pg',
@@ -35,6 +37,7 @@ app.get("/profile/:id", profile.handleProfile(db));
 
 app.put("/image", image.handleImage(db));
 app.post("/imageurl", image.handleApiCall());
+app.post("/image-upload", image.handleImageUpload());
 
 app.get("*", (req, res) => {
 	res.send("sorry, nothing here((");
